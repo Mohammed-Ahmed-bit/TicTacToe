@@ -1,4 +1,4 @@
-name: C++ GoogleTest CI
+name: Build and Test
 
 on:
   push:
@@ -13,17 +13,17 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      with:
-        submodules: true
 
-    - name: Install dependencies
-      run: sudo apt update && sudo apt install -y cmake g++ make
+    - name: Install Qt5 and CMake
+      run: |
+        sudo apt update
+        sudo apt install -y qtbase5-dev qtbase5-dev-tools cmake g++
 
-    - name: Configure with CMake
-      run: cmake -S . -B build
+    - name: Configure project
+      run: cmake -S . -B build -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt5
 
-    - name: Build project
+    - name: Build
       run: cmake --build build
 
-    - name: Run Google Tests
-      run: ctest --test-dir build
+    - name: Run tests
+      run: cd build && ctest --output-on-failure
